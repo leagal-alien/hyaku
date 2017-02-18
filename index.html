@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>小倉百人一首</title>
+    <meta content="width=device-width, initial-scale=0.6" name="viewport">
+    <style>
+      body { color: #666; font-family: sans-serif; line-height: 1.4; }
+      h1 { color: #444; font-size: 1.2em; padding: 14px 2px 12px; margin: 0px; }
+      h1 em { font-style: normal; color: #999; }
+      a { color: #888; text-decoration: none; }
+      #wrapper { width: 480px; margin: 40px auto; }
+      
+      ol { padding: 0px; margin: 0px; list-style: decimal-leading-zero inside; color: #ccc; width: 600px; border-top: 1px solid #ccc; font-size: 0.9em; }
+      ol li { position: relative; margin: 0px; padding: 9px 2px 10px; border-bottom: 1px solid #ccc; cursor: pointer; }
+      ol li a { display: block; text-indent: -3.3ex; padding: 0px 0px 0px 20px; }
+      li.playing { color: #aaa; text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3); }
+      li.playing a { color: #000; }
+      li.playing:before { content: '♬'; width: 14px; height: 14px; padding: 3px; line-height: 14px; margin: 0px; position: absolute; left: -24px; top: 9px; color: #000; font-size: 13px; text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2); }
+      
+      #shortcuts { width: 100%; color: #666; font-size: 0.9em; margin: 0px 0px 0px; padding: 10px 10px 5px; background: #f3f3f3; background: rgba(240, 240, 240, 0.7); }
+      #shortcuts div { width: 440px; margin: 0px auto; }
+      #shortcuts h1 { margin: 0px 0px 6px; }
+      #shortcuts p { margin: 0px 0px 18px; }
+      #shortcuts em { font-style: normal; background: #d3d3d3; padding: 3px 9px; position: relative; left: -3px;
+        -webkit-border-radius: 4px; -moz-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); -o-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); }
+
+      @media screen and (max-device-width: 490px) {
+        #wrapper { position: relative; left: -3%; }
+        #shortcuts { display: none; }
+      }
+    </style>
+    <script src="./js/jquery-3.1.1.min.js"></script>
+    <script src="./js/audio.min.js"></script>
+    <script>
+      $(function() { 
+
+//        $( "#shuffle_hyaku" ).click(function(e) {
+          var arr = []; // 要素を格納する配列を用意します。
+        
+          // randomの中にある要素を、push()で要素の中身を配列に追加します。
+          $("#plya_lists_hyaku li").each(function() {
+              arr.push($(this).html());
+          });
+        
+          //sort()とMath.random()を使ってランダムに並べ替えます。
+          arr.sort(function() {
+              return Math.random() - Math.random();
+          });
+          //並べ替えた後は、randomの中身を空にする。
+          $("#plya_lists_hyaku").empty();
+        
+          //arrに入っている配列の数だけをループさせる。
+          for(i=0; i < arr.length; i++) {
+            //append()を使って、randomの中に一つ一つ追加していく。
+            $("#plya_lists_hyaku").append('<li>' + arr[i] + '</li>');
+          }
+          
+  //      });
+
+        // Setup the player to autoplay the next track
+        var a = audiojs.createAll({
+          trackEnded: function() {
+            var next = $('ol li.playing').next();
+            if (!next.length) next = $('ol li').first();
+            next.addClass('playing').siblings().removeClass('playing');
+            audio.load($('a', next).attr('data-src'));
+            audio.play();
+          }
+        });
+        
+        // Load in the first track
+        var audio = a[0];
+            first = $('ol a').attr('data-src');
+        $('ol li').first().addClass('playing');
+        audio.load(first);
+
+
+        // Load in a track on click
+        $('ol li').click(function(e) {
+          e.preventDefault();
+          $(this).addClass('playing').siblings().removeClass('playing');
+          audio.load($('a', this).attr('data-src'));
+          audio.play();
+        });
+        
+        $( "#prev_hyaku" ).click(function(e) {
+          var prev = $('li.playing').prev();
+          if (!prev.length) prev = $('ol li').last();
+          prev.click();
+        });
+        
+        $( "#next_hyaku" ).click(function(e) {
+          var next = $('li.playing').next();
+          if (!next.length) next = $('ol li').first();
+          next.click();
+        });
+        
+        $( "#pause_hyaku" ).click(function(e) {
+           audio.playPause();
+        });
+        
+        // Keyboard shortcuts
+/*        $(document).keydown(function(e) {
+          var unicode = e.charCode ? e.charCode : e.keyCode;
+             // right arrow
+          if (unicode == 39) {
+            var next = $('li.playing').next();
+            if (!next.length) next = $('ol li').first();
+            next.click();
+            // back arrow
+          } else if (unicode == 37) {
+            var prev = $('li.playing').prev();
+            if (!prev.length) prev = $('ol li').last();
+            prev.click();
+            // spacebar
+          } else if (unicode == 32) {
+            audio.playPause();
+          }
+        })
+*/
+      });
+/*      
+      function shuffle(array) {
+        var n = array.length, t, i;
+        while (n) {
+          i = Math.floor(Math.random() * n--);
+          t = array[n];
+          array[n] = array[i];
+          array[i] = t;
+        }
+        return array;
+      }
+*/
+    </script>
+  </head>
+  <body>
+  	
+    <div id="wrapper">
+      <h1>冴吏専用 小倉百人一首プレイヤー</h1>
+      <div id="main_img" ><img src="./img/hyaku.jpg"/></div>
+      <audio preload></audio>
+      
+
+    <div id="shortcuts">
+      <div>
+        <em id="prev_hyaku" style="cursor: hand; cursor:pointer;">&larr;</em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em id="pause_hyaku" style="cursor: hand; cursor:pointer;">P A U S E</em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em id="next_hyaku" style="cursor: hand; cursor:pointer;">&rarr;</em>
+      </div>
+    </div>
+      
+      <ol id="plya_lists_hyaku">
+        <li><a href="#" data-src="./audio/001.mp3">001&nbsp;秋の田の&nbsp;かりほの庵の&nbsp;苫をあらみ&nbsp;わが衣手は&nbsp;露にぬれつつ&nbsp;<span>（天智天皇）</span></a></li>
+        <li><a href="#" data-src="./audio/002.mp3">002&nbsp;春すぎて&nbsp;夏来にけらし&nbsp;白妙の&nbsp;衣ほすてふ&nbsp;天の香具山&nbsp;<span>（持統天皇）</span></a></li>
+        <li><a href="#" data-src="./audio/003.mp3">003&nbsp;あしびきの&nbsp;山鳥の尾の&nbsp;しだり尾の&nbsp;ながながし夜を&nbsp;ひとりかも寝む&nbsp;<span>（柿本人麻呂）</span></a></li>
+        <li><a href="#" data-src="./audio/004.mp3">004&nbsp;田子の浦に&nbsp;うち出でて見れば&nbsp;白妙の&nbsp;富士の高嶺に&nbsp;雪はふりつつ&nbsp;<span>（山部赤人）</span></a></li>
+        <li><a href="#" data-src="./audio/005.mp3">005&nbsp;奥山に&nbsp;もみぢ踏み分け&nbsp;鳴く鹿の&nbsp;声聞く時ぞ&nbsp;秋は悲しき&nbsp;<span>（猿丸大夫）</span></a></li>
+        <li><a href="#" data-src="./audio/006.mp3">006&nbsp;かささぎの&nbsp;渡せる橋に&nbsp;おく霜の&nbsp;白きを見れば&nbsp;夜ぞふけにける&nbsp;<span>（中納言家持）</span></a></li>
+        <li><a href="#" data-src="./audio/007.mp3">007&nbsp;天の原&nbsp;ふりさけ見れば&nbsp;春日なる&nbsp;三笠の山に&nbsp;出でし月かも&nbsp;<span>（安倍仲麿）</span></a></li>
+        <li><a href="#" data-src="./audio/008.mp3">008&nbsp;わが庵は&nbsp;都のたつみ&nbsp;しかぞすむ&nbsp;世をうぢ山と&nbsp;人はいふなり&nbsp;<span>（喜撰法師）</span></a></li>
+        <li><a href="#" data-src="./audio/009.mp3">009&nbsp;花の色は&nbsp;うつりにけりな&nbsp;いたづらに&nbsp;わが身世にふる&nbsp;ながめせしまに&nbsp;<span>（小野小町）</span></a></li>
+        <li><a href="#" data-src="./audio/010.mp3">010&nbsp;これやこの&nbsp;行くも帰るも&nbsp;別れては&nbsp;知るも知らぬも&nbsp;あふ坂の関&nbsp;<span>（蟬丸）</span></a></li>
+        <li><a href="#" data-src="./audio/011.mp3">011&nbsp;わたの原&nbsp;八十島かけて&nbsp;漕ぎ出でぬと&nbsp;人には告げよ&nbsp;あまのつり舟&nbsp;<span>（参議篁）</span></a></li>
+        <li><a href="#" data-src="./audio/012.mp3">012&nbsp;天つ風&nbsp;雲のかよひ路&nbsp;吹きとぢよ&nbsp;をとめの姿&nbsp;しばしとどめむ&nbsp;<span>（僧正遍昭）</span></a></li>
+        <li><a href="#" data-src="./audio/013.mp3">013&nbsp;つくばねの&nbsp;峰より落つる&nbsp;みなの川&nbsp;こひぞつもりて&nbsp;淵となりぬる&nbsp;<span>（陽成院）</span></a></li>
+        <li><a href="#" data-src="./audio/014.mp3">014&nbsp;陸奥の&nbsp;しのぶもぢずり&nbsp;誰ゆゑに&nbsp;乱れそめにし&nbsp;われならなくに&nbsp;<span>（河原左大臣）</span></a></li>
+        <li><a href="#" data-src="./audio/015.mp3">015&nbsp;君がため&nbsp;春の野に出でて&nbsp;若菜つむ&nbsp;わが衣手に&nbsp;雪はふりつつ&nbsp;<span>（光孝天皇）</span></a></li>
+        <li><a href="#" data-src="./audio/016.mp3">016&nbsp;立ち別れ&nbsp;いなばの山の&nbsp;峰に生ふる&nbsp;まつとし聞かば&nbsp;今帰り来む&nbsp;<span>（中納言行平）</span></a></li>
+        <li><a href="#" data-src="./audio/017.mp3">017&nbsp;ちはやぶる&nbsp;神代もきかず&nbsp;竜田川&nbsp;からくれなゐに&nbsp;水くくるとは&nbsp;<span>（在原業平朝臣）</span></a></li>
+        <li><a href="#" data-src="./audio/018.mp3">018&nbsp;住の江の&nbsp;岸による波&nbsp;よるさへや&nbsp;夢の通ひ路&nbsp;人めよくらむ&nbsp;<span>（藤原敏行朝臣）</span></a></li>
+        <li><a href="#" data-src="./audio/019.mp3">019&nbsp;難波潟&nbsp;みじかき葦の&nbsp;ふしの間も&nbsp;あはでこの世を&nbsp;過ぐしてよとや&nbsp;<span>（伊勢）</span></a></li>
+        <li><a href="#" data-src="./audio/020.mp3">020&nbsp;わびぬれば&nbsp;今はた同じ&nbsp;難波なる&nbsp;みをつくしても&nbsp;あはむとぞ思ふ&nbsp;<span>（元良親王）</span></a></li>
+        <li><a href="#" data-src="./audio/021.mp3">021&nbsp;今こむと&nbsp;言ひしばかりに&nbsp;長月の&nbsp;有明の月を&nbsp;待ちいでつるかな&nbsp;<span>（素性法師）</span></a></li>
+        <li><a href="#" data-src="./audio/022.mp3">022&nbsp;吹くからに&nbsp;秋の草木の&nbsp;しをるれば&nbsp;むべ山風を&nbsp;嵐といふらむ&nbsp;<span>（文屋康秀）</span></a></li>
+        <li><a href="#" data-src="./audio/023.mp3">023&nbsp;月みれば&nbsp;千々に物こそ&nbsp;悲しけれ&nbsp;我が身ひとつの&nbsp;秋にはあらねど&nbsp;<span>（大江千里）</span></a></li>
+        <li><a href="#" data-src="./audio/024.mp3">024&nbsp;このたびは&nbsp;ぬさもとりあへず&nbsp;手向山&nbsp;紅葉のにしき&nbsp;神のまにまに&nbsp;<span>（菅家）</span></a></li>
+        <li><a href="#" data-src="./audio/025.mp3">025&nbsp;名にしおはば&nbsp;逢坂山の&nbsp;さねかづら&nbsp;人に知られで&nbsp;くるよしもがな&nbsp;<span>（三条右大臣）</span></a></li>
+        <li><a href="#" data-src="./audio/026.mp3">026&nbsp;小倉山&nbsp;峰のもみぢ葉&nbsp;心あらば&nbsp;今ひとたびの&nbsp;みゆき待たなむ&nbsp;<span>（貞信公）</span></a></li>
+        <li><a href="#" data-src="./audio/027.mp3">027&nbsp;みかの原&nbsp;わきて流るる&nbsp;いづみ川&nbsp;いつみきとてか&nbsp;恋しかるらむ&nbsp;<span>（中納言兼輔）</span></a></li>
+        <li><a href="#" data-src="./audio/028.mp3">028&nbsp;山里は&nbsp;冬ぞさびしさ&nbsp;まさりける&nbsp;人めも草も&nbsp;かれぬと思へば&nbsp;<span>（源宗于朝臣）</span></a></li>
+        <li><a href="#" data-src="./audio/029.mp3">029&nbsp;心あてに&nbsp;折らばや折らむ&nbsp;初霜の&nbsp;おきまどはせる&nbsp;白菊の花&nbsp;<span>（凡河内躬恒）</span></a></li>
+        <li><a href="#" data-src="./audio/030.mp3">030&nbsp;ありあけの&nbsp;つれなく見えし&nbsp;別れより&nbsp;暁ばかり&nbsp;憂きものはなし&nbsp;<span>（壬生忠岑）</span></a></li>
+        <li><a href="#" data-src="./audio/031.mp3">031&nbsp;朝ぼらけ&nbsp;ありあけの月と&nbsp;見るまでに&nbsp;吉野の里に&nbsp;降れる白雪&nbsp;<span>（坂上是則）</span></a></li>
+        <li><a href="#" data-src="./audio/032.mp3">032&nbsp;山川に&nbsp;風のかけたる&nbsp;しがらみは&nbsp;流れもあへぬ&nbsp;紅葉なりけり&nbsp;<span>（春道列樹）</span></a></li>
+        <li><a href="#" data-src="./audio/033.mp3">033&nbsp;ひさかたの&nbsp;光のどけき&nbsp;春の日に&nbsp;しづ心なく&nbsp;花の散るらむ&nbsp;<span>（紀友則）</span></a></li>
+        <li><a href="#" data-src="./audio/034.mp3">034&nbsp;誰をかも&nbsp;知る人にせむ&nbsp;高砂の&nbsp;松も昔の&nbsp;友ならなくに&nbsp;<span>（藤原興風）</span></a></li>
+        <li><a href="#" data-src="./audio/035.mp3">035&nbsp;人はいさ&nbsp;心も知らず&nbsp;ふるさとは&nbsp;花ぞ昔の&nbsp;香に匂ひける&nbsp;<span>（紀貫之）</span></a></li>
+        <li><a href="#" data-src="./audio/036.mp3">036&nbsp;夏の夜は&nbsp;まだ宵ながら&nbsp;明けぬるを&nbsp;雲のいづこに&nbsp;月やどるらむ&nbsp;<span>（清原深養父）</span></a></li>
+        <li><a href="#" data-src="./audio/037.mp3">037&nbsp;白露に&nbsp;風の吹きしく&nbsp;秋の野は&nbsp;つらぬきとめぬ&nbsp;玉ぞ散りける&nbsp;<span>（文屋朝康）</span></a></li>
+        <li><a href="#" data-src="./audio/038.mp3">038&nbsp;忘らるる&nbsp;身をば思はず&nbsp;誓ひてし&nbsp;人のいのちの&nbsp;惜しくもあるかな&nbsp;<span>（右近）</span></a></li>
+        <li><a href="#" data-src="./audio/039.mp3">039&nbsp;浅茅生の&nbsp;小野の篠原&nbsp;しのぶれど&nbsp;あまりてなどか&nbsp;人の恋しき&nbsp;<span>（参議等）</span></a></li>
+        <li><a href="#" data-src="./audio/040.mp3">040&nbsp;しのぶれど&nbsp;色に出でにけり&nbsp;わが恋は&nbsp;物や思ふと&nbsp;人の問ふまで&nbsp;<span>（平兼盛）</span></a></li>
+        <li><a href="#" data-src="./audio/041.mp3">041&nbsp;恋すてふ&nbsp;わが名はまだき&nbsp;立ちにけり&nbsp;人知れずこそ&nbsp;思ひ初めしか&nbsp;<span>（壬生忠見）</span></a></li>
+        <li><a href="#" data-src="./audio/042.mp3">042&nbsp;契りきな&nbsp;かたみに袖を&nbsp;しぼりつつ&nbsp;末の松山&nbsp;波越さじとは&nbsp;<span>（清原元輔）</span></a></li>
+        <li><a href="#" data-src="./audio/043.mp3">043&nbsp;あひ見ての&nbsp;のちの心に&nbsp;くらぶれば&nbsp;昔は物を&nbsp;思はざりけり&nbsp;<span>（権中納言敦忠）</span></a></li>
+        <li><a href="#" data-src="./audio/044.mp3">044&nbsp;あふことの&nbsp;たえてしなくは&nbsp;なかなかに&nbsp;人をも身をも&nbsp;恨みざらまし&nbsp;<span>（中納言朝忠）</span></a></li>
+        <li><a href="#" data-src="./audio/045.mp3">045&nbsp;あはれとも&nbsp;いふべき人は&nbsp;思ほえで&nbsp;身のいたづらに&nbsp;なりぬべきかな&nbsp;<span>（謙徳公）</span></a></li>
+        <li><a href="#" data-src="./audio/046.mp3">046&nbsp;由良のとを&nbsp;渡る舟人&nbsp;かぢを絶え&nbsp;ゆくへも知らぬ&nbsp;恋の道かな&nbsp;<span>（曾禰好忠）</span></a></li>
+        <li><a href="#" data-src="./audio/047.mp3">047&nbsp;八重むぐら&nbsp;しげれる宿の&nbsp;さびしきに&nbsp;人こそ見えね&nbsp;秋は来にけり&nbsp;<span>（恵慶法師）</span></a></li>
+        <li><a href="#" data-src="./audio/048.mp3">048&nbsp;風をいたみ&nbsp;岩うつ波の&nbsp;おのれのみ&nbsp;くだけて物を&nbsp;思ふころかな&nbsp;<span>（源重之）</span></a></li>
+        <li><a href="#" data-src="./audio/049.mp3">049&nbsp;みかきもり&nbsp;衛士のたく火の&nbsp;夜は燃え&nbsp;昼は消えつつ&nbsp;物をこそ思へ&nbsp;<span>（大中臣能宣）</span></a></li>
+        <li><a href="#" data-src="./audio/050.mp3">050&nbsp;君がため&nbsp;惜しからざりし&nbsp;命さへ&nbsp;長くもがなと&nbsp;思ひけるかな&nbsp;<span>（藤原義孝）</span></a></li>
+        <li><a href="#" data-src="./audio/051.mp3">051&nbsp;かくとだに&nbsp;えやはいぶきの&nbsp;さしも草&nbsp;さしも知らじな&nbsp;もゆる思ひを&nbsp;<span>（藤原実方朝臣）</span></a></li>
+        <li><a href="#" data-src="./audio/052.mp3">052&nbsp;明けぬれば&nbsp;暮るるものとは&nbsp;知りながら&nbsp;なほうらめしき&nbsp;朝ぼらけかな&nbsp;<span>（藤原道信朝臣）</span></a></li>
+        <li><a href="#" data-src="./audio/053.mp3">053&nbsp;嘆きつつ&nbsp;ひとり寝る夜の&nbsp;明くるまは&nbsp;いかに久しき&nbsp;ものとかは知る&nbsp;<span>（右大将道綱母）</span></a></li>
+        <li><a href="#" data-src="./audio/054.mp3">054&nbsp;忘れじの&nbsp;行く末までは&nbsp;かたければ&nbsp;今日をかぎりの&nbsp;命ともがな&nbsp;<span>（儀同三司母）</span></a></li>
+        <li><a href="#" data-src="./audio/055.mp3">055&nbsp;滝の音は&nbsp;絶えて久しく&nbsp;なりぬれど&nbsp;名こそ流れて&nbsp;なほ聞こえけれ&nbsp;<span>（大納言公任）</span></a></li>
+        <li><a href="#" data-src="./audio/056.mp3">056&nbsp;あらざらむ&nbsp;この世のほかの&nbsp;思ひ出に&nbsp;今ひとたびの&nbsp;逢ふこともがな&nbsp;<span>（和泉式部）</span></a></li>
+        <li><a href="#" data-src="./audio/057.mp3">057&nbsp;めぐりあひて&nbsp;見しやそれとも&nbsp;分かぬまに&nbsp;雲がくれにし&nbsp;夜半の月かな&nbsp;<span>（紫式部）</span></a></li>
+        <li><a href="#" data-src="./audio/058.mp3">058&nbsp;ありま山&nbsp;ゐなの笹原&nbsp;風吹けば&nbsp;いでそよ人を&nbsp;忘れやはする&nbsp;<span>（大弐三位）</span></a></li>
+        <li><a href="#" data-src="./audio/059.mp3">059&nbsp;やすらはで&nbsp;寝なましものを&nbsp;さ夜更けて&nbsp;かたぶくまでの&nbsp;月を見しかな&nbsp;<span>（赤染衛門）</span></a></li>
+        <li><a href="#" data-src="./audio/060.mp3">060&nbsp;大江山&nbsp;いく野の道の&nbsp;遠ければ&nbsp;まだふみも見ず&nbsp;天の橋立&nbsp;<span>（小式部内侍）</span></a></li>
+        <li><a href="#" data-src="./audio/061.mp3">061&nbsp;いにしへの&nbsp;奈良の都の&nbsp;八重桜&nbsp;けふ九重に&nbsp;にほひぬるかな&nbsp;<span>（伊勢大輔）</span></a></li>
+        <li><a href="#" data-src="./audio/062.mp3">062&nbsp;夜をこめて&nbsp;鳥のそらねは&nbsp;はかるとも&nbsp;よに逢坂の&nbsp;関はゆるさじ&nbsp;<span>（清少納言）</span></a></li>
+        <li><a href="#" data-src="./audio/063.mp3">063&nbsp;今はただ&nbsp;思ひ絶えなむ&nbsp;とばかりを&nbsp;人づてならで&nbsp;言ふよしもがな&nbsp;<span>（左京大夫道雅）</span></a></li>
+        <li><a href="#" data-src="./audio/064.mp3">064&nbsp;朝ぼらけ&nbsp;宇治の川霧&nbsp;たえだえに&nbsp;あらはれわたる&nbsp;瀬々の網代木&nbsp;<span>（権中納言定頼）</span></a></li>
+        <li><a href="#" data-src="./audio/065.mp3">065&nbsp;恨みわび&nbsp;ほさぬ袖だに&nbsp;あるものを&nbsp;恋にくちなむ&nbsp;名こそ惜しけれ&nbsp;<span>（相模）</span></a></li>
+        <li><a href="#" data-src="./audio/066.mp3">066&nbsp;もろともに&nbsp;あはれと思へ&nbsp;山桜&nbsp;花よりほかに&nbsp;知る人もなし&nbsp;<span>（前大僧正行尊）</span></a></li>
+        <li><a href="#" data-src="./audio/067.mp3">067&nbsp;春の夜の&nbsp;夢ばかりなる&nbsp;手枕に&nbsp;かひなく立たむ&nbsp;名こそ惜しけれ&nbsp;<span>（周防内侍）</span></a></li>
+        <li><a href="#" data-src="./audio/068.mp3">068&nbsp;心にも&nbsp;あらでうき世に&nbsp;ながらへば&nbsp;恋しかるべき&nbsp;夜半の月かな&nbsp;<span>（三条院）</span></a></li>
+        <li><a href="#" data-src="./audio/069.mp3">069&nbsp;あらし吹く&nbsp;み室の山の&nbsp;もみぢ葉は&nbsp;竜田の川の&nbsp;錦なりけり&nbsp;<span>（能因法師）</span></a></li>
+        <li><a href="#" data-src="./audio/070.mp3">070&nbsp;さびしさに&nbsp;宿をたち出でて&nbsp;ながむれば&nbsp;いづこも同じ&nbsp;秋の夕暮れ&nbsp;<span>（良暹法師）</span></a></li>
+        <li><a href="#" data-src="./audio/071.mp3">071&nbsp;夕されば&nbsp;門田の稲葉&nbsp;おとづれて&nbsp;葦のまろやに&nbsp;秋風ぞ吹く&nbsp;<span>（大納言経信）</span></a></li>
+        <li><a href="#" data-src="./audio/072.mp3">072&nbsp;音にきく&nbsp;たかしの浜の&nbsp;あだ波は&nbsp;かけじや袖の&nbsp;ぬれもこそすれ&nbsp;<span>（祐子内親王家紀伊）</span></a></li>
+        <li><a href="#" data-src="./audio/073.mp3">073&nbsp;高砂の&nbsp;をのへの桜&nbsp;咲きにけり&nbsp;外山のかすみ&nbsp;立たずもあらなむ&nbsp;<span>（前中納言匡房）</span></a></li>
+        <li><a href="#" data-src="./audio/074.mp3">074&nbsp;憂かりける&nbsp;人を初瀬の&nbsp;山おろしよ&nbsp;はげしかれとは&nbsp;祈らぬものを&nbsp;<span>（源俊頼朝臣）</span></a></li>
+        <li><a href="#" data-src="./audio/075.mp3">075&nbsp;契りおきし&nbsp;させもが露を&nbsp;いのちにて&nbsp;あはれ今年の&nbsp;秋もいぬめり&nbsp;<span>（藤原基俊）</span></a></li>
+        <li><a href="#" data-src="./audio/076.mp3">076&nbsp;わたの原&nbsp;こぎ出でてみれば&nbsp;久方の&nbsp;雲ゐにまがふ&nbsp;冲つ白波&nbsp;<span>（法性寺入道前関白太政大臣）</span></a></li>
+        <li><a href="#" data-src="./audio/077.mp3">077&nbsp;瀬をはやみ&nbsp;岩にせかるる&nbsp;滝川の&nbsp;われても末に&nbsp;あはむとぞ思ふ&nbsp;<span>（崇徳院）</span></a></li>
+        <li><a href="#" data-src="./audio/078.mp3">078&nbsp;淡路島&nbsp;かよふ千鳥の&nbsp;鳴く声に&nbsp;幾夜ねざめぬ&nbsp;須磨の関守&nbsp;<span>（源兼昌）</span></a></li>
+        <li><a href="#" data-src="./audio/079.mp3">079&nbsp;秋風に&nbsp;たなびく雲の&nbsp;たえ間より&nbsp;もれ出づる月の&nbsp;かげのさやけさ&nbsp;<span>（左京大夫顕輔）</span></a></li>
+        <li><a href="#" data-src="./audio/080.mp3">080&nbsp;長からむ&nbsp;心も知らず&nbsp;黒髪の&nbsp;乱れてけさは&nbsp;物をこそ思へ&nbsp;<span>（待賢門院堀河）</span></a></li>
+        <li><a href="#" data-src="./audio/081.mp3">081&nbsp;ほととぎす&nbsp;鳴きつる方を&nbsp;ながむれば&nbsp;ただありあけの&nbsp;月ぞ残れる&nbsp;<span>（後徳大寺左大臣）</span></a></li>
+        <li><a href="#" data-src="./audio/082.mp3">082&nbsp;思ひわび&nbsp;さてもいのちは&nbsp;あるものを&nbsp;憂きにたへぬは&nbsp;涙なりけり&nbsp;<span>（道因法師）</span></a></li>
+        <li><a href="#" data-src="./audio/083.mp3">083&nbsp;世の中よ&nbsp;道こそなけれ&nbsp;思ひ入る&nbsp;山の奥にも&nbsp;鹿ぞ鳴くなる&nbsp;<span>（皇太后宮大夫俊成）</span></a></li>
+        <li><a href="#" data-src="./audio/084.mp3">084&nbsp;ながらへば&nbsp;またこのごろや&nbsp;しのばれむ&nbsp;憂しと見し世ぞ&nbsp;今は恋しき&nbsp;<span>（藤原清輔朝臣）</span></a></li>
+        <li><a href="#" data-src="./audio/085.mp3">085&nbsp;夜もすがら&nbsp;物思ふころは&nbsp;明けやらで&nbsp;閨のひまさへ&nbsp;つれなかりけり&nbsp;<span>（俊恵法師）</span></a></li>
+        <li><a href="#" data-src="./audio/086.mp3">086&nbsp;嘆けとて&nbsp;月やは物を&nbsp;思はする&nbsp;かこち顔なる&nbsp;わが涙かな&nbsp;<span>（西行法師）</span></a></li>
+        <li><a href="#" data-src="./audio/087.mp3">087&nbsp;村雨の&nbsp;露もまだひぬ&nbsp;まきの葉に&nbsp;霧立ちのぼる&nbsp;秋の夕暮れ&nbsp;<span>（寂蓮法師）</span></a></li>
+        <li><a href="#" data-src="./audio/088.mp3">088&nbsp;難波江の&nbsp;葦のかりねの&nbsp;ひとよゆゑ&nbsp;みをつくしてや&nbsp;恋ひわたるべき&nbsp;<span>（皇嘉門院別当）</span></a></li>
+        <li><a href="#" data-src="./audio/089.mp3">089&nbsp;玉のをよ&nbsp;たえなばたえね&nbsp;ながらへば&nbsp;忍ぶることの&nbsp;弱りもぞする&nbsp;<span>（式子内親王）</span></a></li>
+        <li><a href="#" data-src="./audio/090.mp3">090&nbsp;見せばやな&nbsp;雄島のあまの&nbsp;袖だにも&nbsp;濡れにぞ濡れし&nbsp;色は変はらず&nbsp;<span>（殷富門院大輔）</span></a></li>
+        <li><a href="#" data-src="./audio/091.mp3">091&nbsp;きりぎりす&nbsp;鳴くや霜夜の&nbsp;さむしろに&nbsp;衣かたしき&nbsp;ひとりかも寝む&nbsp;<span>（後京極摂政前太政大臣）</span></a></li>
+        <li><a href="#" data-src="./audio/092.mp3">092&nbsp;わが袖は&nbsp;潮干に見えぬ&nbsp;沖の石の&nbsp;人こそ知らね&nbsp;乾くまもなし&nbsp;<span>（二条院讃岐）</span></a></li>
+        <li><a href="#" data-src="./audio/093.mp3">093&nbsp;世の中は&nbsp;つねにもがもな&nbsp;渚こぐ&nbsp;あまの小舟の&nbsp;綱手かなしも&nbsp;<span>（鎌倉右大臣）</span></a></li>
+        <li><a href="#" data-src="./audio/094.mp3">094&nbsp;み吉野の&nbsp;山の秋風&nbsp;さ夜ふけて&nbsp;ふるさと寒く&nbsp;衣うつなり&nbsp;<span>（参議雅経）</span></a></li>
+        <li><a href="#" data-src="./audio/095.mp3">095&nbsp;おほけなく&nbsp;うき世の民に&nbsp;おほふかな&nbsp;わが立つ杣に&nbsp;すみぞめの袖&nbsp;<span>（前大僧正慈円）</span></a></li>
+        <li><a href="#" data-src="./audio/096.mp3">096&nbsp;花さそふ&nbsp;嵐の庭の&nbsp;雪ならで&nbsp;ふりゆくものは&nbsp;わが身なりけり&nbsp;<span>（入道前太政大臣）</span></a></li>
+        <li><a href="#" data-src="./audio/097.mp3">097&nbsp;こぬ人を&nbsp;まつほの浦の&nbsp;夕なぎに&nbsp;焼くやもしほの&nbsp;身もこがれつつ&nbsp;<span>（権中納言定家）</span></a></li>
+        <li><a href="#" data-src="./audio/098.mp3">098&nbsp;風そよぐ&nbsp;ならの小川の&nbsp;夕暮れは&nbsp;みそぎぞ夏の&nbsp;しるしなりける&nbsp;<span>（従二位家隆）</span></a></li>
+        <li><a href="#" data-src="./audio/099.mp3">099&nbsp;人もをし&nbsp;人も恨めし&nbsp;あぢきなく&nbsp;世を思ふゆゑに&nbsp;物思ふ身は&nbsp;<span>（後鳥羽院）</span></a></li>
+        <li><a href="#" data-src="./audio/100.mp3">100&nbsp;百敷や&nbsp;ふるき軒端の&nbsp;しのぶにも&nbsp;なほあまりある&nbsp;昔なりけり&nbsp;<span>（順徳院）</span></a></li>
+      </ol>
+    </div>
+  </body>
+</html>
+
+ 
